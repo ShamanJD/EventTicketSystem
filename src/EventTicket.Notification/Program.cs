@@ -15,7 +15,7 @@ var host = Host.CreateDefaultBuilder(args)
 
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host("127.0.0.1", "/", h =>
+                cfg.Host("localhost", "/", h =>
                 {
                     h.Username("guest");
                     h.Password("guest");

@@ -1,19 +1,11 @@
 version: '3.8'
-
 services:
   api:
-    image: eventticket-api:latest
-    networks:
-      - app-net
+    image: ptencha/eventticket-api:v1
     ports:
       - "8080:8080"
     environment:
-      - ConnectionStrings__Database=Host=db;Port=5432;Database=eventticket;Username=admin;Password=password
-      - RabbitMq__Host=rabbitmq
-      - Redis__Configuration=redis:6379
-      - Seq__ServerUrl=http://seq:5341
-
-
-networks:
-  app-net:
-    external: true
+      - ConnectionStrings__Database=Host=host.docker.internal;Port=5432;Database=eventticket;Username=admin;Password=password
+      - RabbitMq__Host=host.docker.internal
+      - Redis__Configuration=host.docker.internal:6379
+      - Seq__ServerUrl=http://host.docker.internal:5341
