@@ -1,0 +1,1 @@
+[![Build and Test](https://github.com/ShamanJD/EventTicketSystem/actions/workflows/ci.yml/badge.svg)](https://github.com/ShamanJD/EventTicketSystem/actions/workflows/ci.yml)
