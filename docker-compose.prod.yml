@@ -12,8 +12,6 @@ services:
       - RabbitMq__Host=rabbitmq
       - Redis__Configuration=redis:6379
       - Seq__ServerUrl=http://seq:5341
-    networks:
-      - my-app-network
 
 
 networks:
