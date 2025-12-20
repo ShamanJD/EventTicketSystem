@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  api:
+    image: eventticket-api:latest
+    networks:
+      - app-net
+    ports:
+      - "8080:8080"
+    environment:
+      - ConnectionStrings__Database=Host=db;Port=5432;Database=eventticket;Username=admin;Password=password
+      - RabbitMq__Host=rabbitmq
+      - Redis__Configuration=redis:6379
+      - Seq__ServerUrl=http://seq:5341
+    networks:
+      - my-app-network
+
+
+networks:
+  app-net:
+    external: true
