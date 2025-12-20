@@ -37,7 +37,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
 
   api:
-    image: ptencha/eventticket-api:v1
+    image: ptencha/eventticket-api:v3
     ports:
       - "8080:8080"
     depends_on:
