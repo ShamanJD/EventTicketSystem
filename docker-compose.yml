@@ -45,7 +45,8 @@ services:
       - rabbitmq
       - redis
     environment:
-      - ConnectionStrings__Database=Host=db;Port=5432;Database=eventticket;Username=admin;Password=password
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=eventticket;Username=admin;Password=password
       - RabbitMq__Host=rabbitmq
       - Redis__Configuration=redis:6379
       - Seq__ServerUrl=http://seq:80
