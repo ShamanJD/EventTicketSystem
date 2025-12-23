@@ -137,10 +137,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddHealthChecks()
-    // Простая проверка "я жив"
     .AddCheck("self", () => HealthCheckResult.Healthy())
-    // Глубокая проверка (БД + Кролик)
-    .AddNpgSql(builder.Configuration.GetConnectionString("Database")!)
+    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!)
     .AddRabbitMQ(
         _ =>
         {
