@@ -8,7 +8,7 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=password
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -36,20 +36,6 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
 
-  api:
-    image: ptencha/eventticket-api:v3
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-      - rabbitmq
-      - redis
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=eventticket;Username=admin;Password=password
-      - RabbitMq__Host=rabbitmq
-      - Redis__Configuration=redis:6379
-      - Seq__ServerUrl=http://seq:80
 
 volumes:
   postgres_data:

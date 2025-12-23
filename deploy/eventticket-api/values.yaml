@@ -57,8 +57,15 @@ service:
   port: 8080
   
 env:
-  ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=eventticket;Username=admin;Password=password"
+  ConnectionStrings__DefaultConnection: "Host=host.docker.internal;Port=5433;Database=eventticket;Username=admin;Password=password"
+  
+  ASPNETCORE_ENVIRONMENT: "Development"
+  
   RabbitMq__Host: "host.docker.internal"
+
+  Redis__Configuration: "host.docker.internal:6379"
+
+  Seq__ServerUrl: "http://host.docker.internal:5341"
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
