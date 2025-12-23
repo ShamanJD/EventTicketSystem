@@ -4,12 +4,15 @@ using EventTicket.Application.Services;
 using EventTicket.Infrastructure;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -133,9 +136,32 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddHealthChecks()
+    // Простая проверка "я жив"
+    .AddCheck("self", () => HealthCheckResult.Healthy())
+    // Глубокая проверка (БД + Кролик)
+    .AddNpgSql(builder.Configuration.GetConnectionString("Database")!)
+    .AddRabbitMQ(
+        _ =>
+        {
+            var factory = new ConnectionFactory()
+            {
+                Uri = new Uri("amqp://guest:guest@localhost:5672")
+            };
+            return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+        },
+        name: "rabbitmq",
+        tags: new[] { "ready" });
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.MapHealthChecks("/health/liveness", new HealthCheckOptions
+{
+    Predicate = (check) => check.Name == "self"
+});
+
+app.MapHealthChecks("/health/readiness");
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
