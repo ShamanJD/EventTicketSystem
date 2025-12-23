@@ -5,8 +5,10 @@ using Serilog;
 var host = Host.CreateDefaultBuilder(args)
     .UseSerilog((context, configuration) =>
         configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.Seq("http://localhost:5341"))
+            .WriteTo.Seq(context.Configuration["Seq:ServerUrl"] ?? "http://localhost:5341"))
     .ConfigureServices(services =>
     {
         services.AddMassTransit(x =>

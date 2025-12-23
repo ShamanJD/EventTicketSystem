@@ -58,6 +58,7 @@ service:
   
 env:
   ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=eventticket;Username=admin;Password=password"
+  RabbitMq__Host: "host.docker.internal"
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:

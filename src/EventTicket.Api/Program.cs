@@ -21,7 +21,7 @@ builder.Host.UseSerilog((context, configuration) =>
         .ReadFrom.Configuration(context.Configuration)
         .Enrich.FromLogContext()
         .WriteTo.Console()
-        .WriteTo.Seq("http://localhost:5341"));
+        .WriteTo.Seq(context.Configuration["Seq:ServerUrl"] ?? "http://localhost:5341"));
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -106,7 +106,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = "localhost:6379";
+    options.Configuration = builder.Configuration["Redis:Configuration"] ?? "localhost:6379";
 });
 
 builder.Services.AddScoped<ConcertService>();
@@ -140,11 +140,12 @@ builder.Services.AddHealthChecks()
     .AddCheck("self", () => HealthCheckResult.Healthy())
     .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!)
     .AddRabbitMQ(
-        _ =>
+        sp =>
         {
+            var rabbitHost = builder.Configuration["RabbitMq:Host"] ?? "localhost";
             var factory = new ConnectionFactory()
             {
-                Uri = new Uri("amqp://guest:guest@localhost:5672")
+                Uri = new Uri($"amqp://guest:guest@{rabbitHost}:5672")
             };
             return factory.CreateConnectionAsync().GetAwaiter().GetResult();
         },
