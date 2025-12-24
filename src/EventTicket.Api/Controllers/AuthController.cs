@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EventTicket.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")] // Это даст префикс /api/auth
+[Route("api/[controller]")]
 public class AuthController (IUserService userService, ITokenService tokenService, ITokenRepository tokenRepository) : ControllerBase
 {
     [HttpPost("login")]
