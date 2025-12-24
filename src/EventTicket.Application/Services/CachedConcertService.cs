@@ -33,6 +33,11 @@ public class CachedConcertService(IConcertService impl, IDistributedCache cache)
         return concert;
     }
 
+    public Task<List<ConcertDto>> GetAllConcertsAsync()
+    {
+        return impl.GetAllConcertsAsync();
+    }
+
     public Task<ConcertDto> CreateConcertAsync(CreateConcertDto dto, CancellationToken ct)
     {
         return impl.CreateConcertAsync(dto, ct);

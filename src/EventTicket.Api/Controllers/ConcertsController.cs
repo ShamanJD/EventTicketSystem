@@ -28,4 +28,19 @@ public class ConcertsController(IConcertService concertService) : ControllerBase
         var result = await _concertService.CreateConcertAsync(request, ct);
         return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var concerts = await _concertService.GetAllConcertsAsync();
+
+        var response = concerts.Select(c => new
+        {
+            id = c.Id,
+            name = c.Name,
+            date = c.Date.ToString("dd.MM.yyyy")
+        });
+
+        return Ok(response);
+    }
 }

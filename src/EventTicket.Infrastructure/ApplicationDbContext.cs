@@ -9,6 +9,8 @@ namespace EventTicket.Infrastructure
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         public DbSet<Concert> Concerts { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -20,7 +22,6 @@ namespace EventTicket.Infrastructure
             modelBuilder.AddOutboxMessageEntity();
             modelBuilder.AddOutboxStateEntity();
 
-            // Твои конфигурации
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

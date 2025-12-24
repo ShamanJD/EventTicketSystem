@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 
 namespace EventTicket.Application.Services;
 
-
 public class ConcertService(IApplicationDbContext context, IPublishEndpoint publishEndpoint, ILogger<ConcertService> logger) : IConcertService
 {
     public async Task<ConcertDto> CreateConcertAsync(CreateConcertDto dto, CancellationToken cancellationToken)
@@ -40,6 +39,13 @@ public class ConcertService(IApplicationDbContext context, IPublishEndpoint publ
         }
 
         return MapToDto(concert);
+    }
+
+    public Task<List<ConcertDto>> GetAllConcertsAsync()
+    {
+        var concerts = context.Concerts;
+        var concertDtos = concerts.Select(x => MapToDto(x)).ToListAsync();
+        return concertDtos;
     }
 
     private static ConcertDto MapToDto(Concert concert)
