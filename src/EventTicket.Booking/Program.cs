@@ -1,3 +1,4 @@
+using EventTicket.Application.Services;
 using EventTicket.Booking.Consumers;
 using EventTicket.Infrastructure;
 using MassTransit;
@@ -15,6 +16,8 @@ var host = Host.CreateDefaultBuilder(args)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(context.Configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddMassTransit(x =>
         {
