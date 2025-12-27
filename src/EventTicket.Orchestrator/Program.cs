@@ -1,4 +1,4 @@
-using EventTicket.Notification.Consumers;
+using EventTicket.Orchestrator.Sagas;
 using MassTransit;
 using Serilog;
 
@@ -13,23 +13,21 @@ var host = Host.CreateDefaultBuilder(args)
     {
         services.AddMassTransit(x =>
         {
-            x.AddConsumer<SendNotificationConsumer>();
+            x.AddSagaStateMachine<ConcertSaga, ConcertSagaState>()
+             .InMemoryRepository();
+             
+             x.AddSagaStateMachine<BookingSaga, BookingSagaState>()
+             .InMemoryRepository();
 
             x.UsingRabbitMq((context, cfg) =>
             {
                 var configuration = context.GetRequiredService<IConfiguration>();
-
                 var host = configuration["RabbitMq:Host"] ?? "localhost";
 
                 cfg.Host(host, "/", h =>
                 {
                     h.Username("guest");
                     h.Password("guest");
-                });
-
-                cfg.UseMessageRetry(r =>
-                {
-                    r.Exponential(3, TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(100));
                 });
 
                 cfg.ConfigureEndpoints(context);
