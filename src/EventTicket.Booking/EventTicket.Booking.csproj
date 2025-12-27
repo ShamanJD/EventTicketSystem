@@ -16,5 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EventTicket.Contracts\EventTicket.Contracts.csproj" />
+    <ProjectReference Include="..\EventTicket.Infrastructure\EventTicket.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

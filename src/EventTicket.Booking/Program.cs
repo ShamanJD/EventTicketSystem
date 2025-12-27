@@ -1,5 +1,7 @@
 using EventTicket.Booking.Consumers;
+using EventTicket.Infrastructure;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
@@ -11,6 +13,9 @@ var host = Host.CreateDefaultBuilder(args)
             .WriteTo.Seq(context.Configuration["Seq:ServerUrl"] ?? "http://localhost:5341"))
     .ConfigureServices(services =>
     {
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(host.Configuration.GetConnectionString("DefaultConnection")));
+
         services.AddMassTransit(x =>
         {
             x.AddConsumer<BookingActionConsumer>();
