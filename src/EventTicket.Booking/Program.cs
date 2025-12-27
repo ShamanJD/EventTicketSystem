@@ -11,10 +11,10 @@ var host = Host.CreateDefaultBuilder(args)
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .WriteTo.Seq(context.Configuration["Seq:ServerUrl"] ?? "http://localhost:5341"))
-    .ConfigureServices(services =>
+    .ConfigureServices((context, services) =>
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(host.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(context.Configuration.GetConnectionString("DefaultConnection")));
 
         services.AddMassTransit(x =>
         {
