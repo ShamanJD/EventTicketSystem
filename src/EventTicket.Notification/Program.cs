@@ -14,6 +14,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddMassTransit(x =>
         {
             x.AddConsumer<SendNotificationConsumer>();
+            x.SetKebabCaseEndpointNameFormatter();
 
             x.UsingRabbitMq((context, cfg) =>
             {
@@ -29,7 +30,8 @@ var host = Host.CreateDefaultBuilder(args)
 
                 cfg.UseMessageRetry(r =>
                 {
-                    r.Exponential(3, TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(100));
+                    r.Exponential(3, TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1),
+                        TimeSpan.FromMilliseconds(100));
                 });
 
                 cfg.ConfigureEndpoints(context);
