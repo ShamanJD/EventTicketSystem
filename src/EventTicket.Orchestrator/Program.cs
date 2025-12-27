@@ -1,3 +1,4 @@
+using EventTicket.Contracts;
 using EventTicket.Orchestrator.Sagas;
 using MassTransit;
 using Serilog;
@@ -11,13 +12,17 @@ var host = Host.CreateDefaultBuilder(args)
             .WriteTo.Seq(context.Configuration["Seq:ServerUrl"] ?? "http://localhost:5341"))
     .ConfigureServices(services =>
     {
+        EndpointConvention.Map<RequestPayment>(new Uri("queue:payment-request"));
+        EndpointConvention.Map<ConfirmBooking>(new Uri("queue:booking-action"));
+        EndpointConvention.Map<CancelBooking>(new Uri("queue:booking-action"));
+
         services.AddMassTransit(x =>
         {
             x.AddSagaStateMachine<ConcertSaga, ConcertSagaState>()
-             .InMemoryRepository();
-             
-             x.AddSagaStateMachine<BookingSaga, BookingSagaState>()
-             .InMemoryRepository();
+                .InMemoryRepository();
+
+            x.AddSagaStateMachine<BookingSaga, BookingSagaState>()
+                .InMemoryRepository();
 
             x.UsingRabbitMq((context, cfg) =>
             {
