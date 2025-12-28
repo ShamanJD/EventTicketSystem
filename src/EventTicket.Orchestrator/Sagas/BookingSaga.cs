@@ -1,5 +1,7 @@
 using EventTicket.Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.SignalR;
+using EventTicket.Orchestrator.Hubs;
 
 namespace EventTicket.Orchestrator.Sagas;
 
@@ -13,7 +15,7 @@ public class BookingSaga : MassTransitStateMachine<BookingSagaState>
     public Event<PaymentCompleted> PaymentCompleted { get; private set; } = null!;
     public Event<PaymentFailed> PaymentFailed { get; private set; } = null!;
 
-    public BookingSaga()
+    public BookingSaga(IHubContext<BookingHub> hubContext)
     {
         InstanceState(x => x.CurrentState);
 
@@ -35,14 +37,24 @@ public class BookingSaga : MassTransitStateMachine<BookingSagaState>
         During(PaymentPending,
             When(PaymentCompleted)
                 .Send(context => new ConfirmBooking(context.Saga.BookingId))
+                .ThenAsync(async context =>
+                {
+                    await hubContext.Clients.Group(context.Saga.BookingId.ToString())
+                        .SendAsync("StatusUpdated", "Confirmed");
+                })
                 .TransitionTo(Confirmed)
                 .Finalize(),
             When(PaymentFailed)
                 .Send(context => new CancelBooking(context.Saga.BookingId, context.Message.Reason))
+                .ThenAsync(async context =>
+                {
+                    await hubContext.Clients.Group(context.Saga.BookingId.ToString())
+                        .SendAsync("StatusUpdated", "Cancelled");
+                })
                 .TransitionTo(Cancelled)
                 .Finalize()
         );
-                 
+
         SetCompletedWhenFinalized();
     }
 }

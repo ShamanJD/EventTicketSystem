@@ -25,6 +25,10 @@ namespace EventTicket.Infrastructure
             modelBuilder.AddOutboxMessageEntity();
             modelBuilder.AddOutboxStateEntity();
 
+            modelBuilder.Entity<Booking>()
+                .Property(x => x.RowVersion)
+                .IsRowVersion();
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

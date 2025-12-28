@@ -1,41 +1,16 @@
-import { useEffect, useState } from 'react';
-import { authorizedFetch } from './api';
+import { Routes, Route, Link } from 'react-router-dom';
+import BookingPage from './features/bookings/BookingPage';
+import ConcertsList from './ConcertsList';
 import Login from './Login';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
-    const [concerts, setConcerts] = useState([]);
-    const [loading, setLoading] = useState(false);
-    // Проверяем, есть ли токен при загрузке
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('accessToken'));
-
-    const fetchConcerts = async () => {
-        setLoading(true);
-        try {
-            const response = await authorizedFetch('/concerts');
-            if (response.ok) {
-                const data = await response.json();
-                setConcerts(data);
-            } else if (response.status === 401) {
-                setIsAuthenticated(false);
-            }
-        } catch (error) {
-            console.error("Ошибка:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            fetchConcerts();
-        }
-    }, [isAuthenticated]);
 
     const handleLogout = () => {
         localStorage.clear();
         setIsAuthenticated(false);
-        setConcerts([]);
     };
 
     if (!isAuthenticated) {
@@ -44,21 +19,23 @@ function App() {
 
     return (
         <div className="App">
-            <header className="App-header">
-                <h1>EventTicket Dashboard</h1>
-                <button onClick={handleLogout} style={{ marginBottom: '20px' }}>Выйти</button>
-
-                {loading ? <p>Загрузка данных...</p> : (
-                    <div className="concert-grid">
-                        {concerts.length > 0 ? concerts.map(c => (
-                            <div key={c.id} className="card">
-                                <h3>{c.name}</h3>
-                                <p>Дата: {c.date}</p>
-                            </div>
-                        )) : <p>Концертов пока нет</p>}
-                    </div>
-                )}
+            <header className="p-4 bg-gray-800 text-white flex justify-between items-center">
+                <nav className="flex space-x-4">
+                    <Link to="/" className="text-blue-300 hover:text-white">Концерты</Link>
+                    <Link to="/booking" className="text-blue-300 hover:text-white">Бронирование</Link>
+                </nav>
+                <div className="flex items-center space-x-4">
+                    <h1>EventTicket Dashboard</h1>
+                    <button onClick={handleLogout} className="bg-red-600 px-3 py-1 rounded">Выйти</button>
+                </div>
             </header>
+
+            <main className="p-4">
+                <Routes>
+                    <Route path="/" element={<ConcertsList />} />
+                    <Route path="/booking" element={<BookingPage />} />
+                </Routes>
+            </main>
         </div>
     );
 }

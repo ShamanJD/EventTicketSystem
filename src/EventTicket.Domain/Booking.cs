@@ -8,8 +8,11 @@ public class Booking
     public BookingStatus Status { get; private set; }
     public string? CancellationReason { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    public uint RowVersion { get; set; }
 
-    private Booking() { }
+    private Booking()
+    {
+    }
 
     public Booking(Guid id, Guid concertId, decimal amount)
     {
