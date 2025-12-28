@@ -9,7 +9,8 @@ public class PaymentRequestConsumer(ILogger<PaymentRequestConsumer> logger) : IC
     {
         logger.LogInformation("Processing payment for Booking {BookingId}, Amount: {Amount}", context.Message.BookingId, context.Message.Amount);
 
-        // Simple logic for demo: If amount is > 1000, fail it.
+        await Task.Delay(5000);
+
         if (context.Message.Amount > 1000)
         {
             logger.LogError("Payment declined for Booking {BookingId}. Amount too high.", context.Message.BookingId);

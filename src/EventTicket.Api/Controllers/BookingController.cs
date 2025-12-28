@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EventTicket.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/bookings")]
 public class BookingController(
     IPublishEndpoint publishEndpoint,
     ILogger<BookingController> logger,

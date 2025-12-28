@@ -1,4 +1,4 @@
-using EventTicket.Api.Middleware;
+п»їusing EventTicket.Api.Middleware;
 using EventTicket.Application.Features.Concerts.Commands.CreateConcert;
 using EventTicket.Application.Services;
 using EventTicket.Infrastructure;
@@ -13,7 +13,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 using RabbitMQ.Client;
-using EventTicket.Api.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,9 +32,8 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+        policy.WithOrigins("http://localhost:5175").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
     });
 });
 
@@ -49,7 +47,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Введите 'Bearer' [пробел] и ваш токен.\r\n\r\nПример: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\""
+        Description = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 'Bearer' [пїЅпїЅпїЅпїЅпїЅпїЅ] пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.\r\n\r\nпїЅпїЅпїЅпїЅпїЅпїЅ: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\""
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -168,8 +166,6 @@ builder.Services.AddHealthChecks()
 
 var app = builder.Build();
 
-app.UseCors();
-
 app.MapHealthChecks("/health/liveness", new HealthCheckOptions
 {
     Predicate = (check) => check.Name == "self"
@@ -186,6 +182,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseExceptionHandler();
 
 app.UseAuthentication();
@@ -194,3 +192,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
