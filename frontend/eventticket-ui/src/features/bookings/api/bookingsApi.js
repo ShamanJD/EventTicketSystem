@@ -10,7 +10,9 @@ export const createBooking = async (concertId, amount) => {
     });
 
     if (!response.ok) {
-        throw new Error('Booking failed');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || errorData.Error || errorData.message || 'Ошибка при создании бронирования';
+        throw new Error(errorMessage);
     }
 
     return response.json();
