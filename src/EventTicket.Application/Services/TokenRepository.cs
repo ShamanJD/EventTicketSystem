@@ -5,9 +5,9 @@ namespace EventTicket.Application.Services;
 
 public class TokenRepository : ITokenRepository
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IAuthDbContext _context;
 
-    public TokenRepository(IApplicationDbContext context)
+    public TokenRepository(IAuthDbContext context)
     {
         _context = context;
     }

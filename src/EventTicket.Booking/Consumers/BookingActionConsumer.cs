@@ -11,7 +11,7 @@ public class BookingActionConsumer(ILogger<BookingActionConsumer> logger, IServi
     public async Task Consume(ConsumeContext<ConfirmBooking> context)
     {
         using var scope = serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<IBookingDbContext>();
 
         var booking = await dbContext.Bookings.FindAsync(context.Message.BookingId);
         if (booking == null)
@@ -29,7 +29,7 @@ public class BookingActionConsumer(ILogger<BookingActionConsumer> logger, IServi
     public async Task Consume(ConsumeContext<CancelBooking> context)
     {
         using var scope = serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<IBookingDbContext>();
 
         var booking = await dbContext.Bookings.FindAsync(context.Message.BookingId);
         if (booking == null)

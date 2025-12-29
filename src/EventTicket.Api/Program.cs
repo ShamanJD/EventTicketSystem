@@ -23,7 +23,8 @@ builder.Host.UseSerilog((context, configuration) =>
         .WriteTo.Console()
         .WriteTo.Seq(context.Configuration["Seq:ServerUrl"] ?? "http://localhost:5341"));
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var concertsConnectionString = builder.Configuration.GetConnectionString("ConcertsConnection");
+var authConnectionString = builder.Configuration.GetConnectionString("AuthConnection");
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -66,11 +67,24 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<ConcertsDbContext>(options =>
 {
-    options.UseNpgsql(connectionString, npgsqlOptions =>
+    options.UseNpgsql(concertsConnectionString, npgsqlOptions =>
     {
-        npgsqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
+        npgsqlOptions.MigrationsAssembly(typeof(ConcertsDbContext).Assembly.FullName);
+
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorCodesToAdd: null);
+    });
+});
+
+builder.Services.AddDbContext<AuthDbContext>(options =>
+{
+    options.UseNpgsql(authConnectionString, npgsqlOptions =>
+    {
+        npgsqlOptions.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName);
 
         npgsqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
@@ -81,7 +95,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddEntityFrameworkOutbox<ApplicationDbContext>(o =>
+    x.AddEntityFrameworkOutbox<ConcertsDbContext>(o =>
     {
         o.QueryDelay = TimeSpan.FromSeconds(1);
 
@@ -126,7 +140,8 @@ builder.Services.AddScoped<IConcertService>(provider =>
         provider.GetRequiredService<IDistributedCache>()
     ));
 
-builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+builder.Services.AddScoped<IConcertsDbContext>(provider => provider.GetRequiredService<ConcertsDbContext>());
+builder.Services.AddScoped<IAuthDbContext>(provider => provider.GetRequiredService<AuthDbContext>());
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -150,7 +165,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddHealthChecks()
     .AddCheck("self", () => HealthCheckResult.Healthy())
-    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!)
+    .AddNpgSql(builder.Configuration.GetConnectionString("ConcertsConnection")!)
     .AddRabbitMQ(
         sp =>
         {

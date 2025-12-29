@@ -5,9 +5,9 @@ namespace EventTicket.Application.Services;
 
 public class UserService : IUserService
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IAuthDbContext _context;
 
-    public UserService(IApplicationDbContext context)
+    public UserService(IAuthDbContext context)
     {
         _context = context;
     }

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EventTicket.Application.Services;
 
-public class ConcertService(IApplicationDbContext context, IPublishEndpoint publishEndpoint, ILogger<ConcertService> logger) : IConcertService
+public class ConcertService(IConcertsDbContext context, IPublishEndpoint publishEndpoint, ILogger<ConcertService> logger) : IConcertService
 {
     public async Task<ConcertDto> CreateConcertAsync(CreateConcertDto dto, CancellationToken cancellationToken)
     {

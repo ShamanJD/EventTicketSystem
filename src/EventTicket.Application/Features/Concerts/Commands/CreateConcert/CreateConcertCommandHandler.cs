@@ -5,7 +5,7 @@ using MediatR;
 
 namespace EventTicket.Application.Features.Concerts.Commands.CreateConcert;
 
-public class CreateConcertCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateConcertCommand, Guid>
+public class CreateConcertCommandHandler(IConcertsDbContext context) : IRequestHandler<CreateConcertCommand, Guid>
 {
     public async Task<Guid> Handle(CreateConcertCommand request, CancellationToken cancellationToken)
     {

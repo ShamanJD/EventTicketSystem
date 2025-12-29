@@ -14,14 +14,15 @@ var host = Host.CreateDefaultBuilder(args)
             .WriteTo.Seq(context.Configuration["Seq:ServerUrl"] ?? "http://localhost:5341"))
     .ConfigureServices((context, services) =>
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(context.Configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<BookingDbContext>(options =>
+            options.UseNpgsql(context.Configuration.GetConnectionString("BookingConnection")));
 
-        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IBookingDbContext>(provider => provider.GetRequiredService<BookingDbContext>());
 
         services.AddMassTransit(x =>
         {
             x.AddConsumer<BookingActionConsumer>();
+            x.AddConsumer<BookingCreatedConsumer>();
             x.SetKebabCaseEndpointNameFormatter();
 
             x.UsingRabbitMq((context, cfg) =>
