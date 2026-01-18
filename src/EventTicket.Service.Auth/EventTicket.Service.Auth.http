@@ -1,0 +1,6 @@
+@EventTicket.Service.Auth_HostAddress = http://localhost:5035
+
+GET {{EventTicket.Service.Auth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

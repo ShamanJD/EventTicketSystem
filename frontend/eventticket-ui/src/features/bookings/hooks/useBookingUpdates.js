@@ -8,7 +8,7 @@ export const useBookingUpdates = (bookingId) => {
         if (!bookingId) return;
 
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('http://localhost:5002/hubs/booking')
+            .withUrl('https://localhost:7000/hubs/booking')
             .withAutomaticReconnect()
             .build();
 

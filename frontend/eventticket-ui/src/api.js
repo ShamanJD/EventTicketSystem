@@ -1,4 +1,4 @@
-const API_URL = 'https://localhost:7172/api';
+const API_URL = 'https://localhost:7000/api';
 
 export const authorizedFetch = async (url, options = {}) => {
     const accessToken = localStorage.getItem('accessToken');

@@ -12,7 +12,7 @@ function Login({ onLoginSuccess }) {
         setIsLoading(true);
 
         try {
-            const response = await fetch('https://localhost:7172/api/auth/login', {
+            const response = await fetch('https://localhost:7000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),

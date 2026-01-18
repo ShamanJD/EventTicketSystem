@@ -6,7 +6,7 @@ function ConcertsList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('https://localhost:7172/api/concerts')
+    fetch('https://localhost:7000/api/concerts')
       .then(response => response.json())
       .then(data => {
         setConcerts(data);

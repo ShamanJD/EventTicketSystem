@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option csharp_namespace = "EventTicket.Contracts.Protos";
+
+package concerts;
+
+// Service for cross-domain concert operations
+service ConcertGrpc {
+  // Check if a concert exists
+  rpc ConcertExists (ConcertExistsRequest) returns (ConcertExistsResponse);
+  
+  // Get concert details by ID
+  rpc GetConcert (GetConcertRequest) returns (GetConcertResponse);
+}
+
+message ConcertExistsRequest {
+  string concert_id = 1;
+}
+
+message ConcertExistsResponse {
+  bool exists = 1;
+}
+
+message GetConcertRequest {
+  string concert_id = 1;
+}
+
+message GetConcertResponse {
+  bool found = 1;
+  string id = 2;
+  string name = 3;
+  string date = 4;
+  string venue = 5;
+}

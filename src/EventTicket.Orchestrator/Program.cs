@@ -1,11 +1,14 @@
 using EventTicket.Contracts;
 using EventTicket.Orchestrator.Hubs;
 using EventTicket.Orchestrator.Sagas;
+using EventTicket.Orchestrator.Consumers;
 using MassTransit;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://localhost:5002");
+// Serilog configured via builder.Host in previous step, but let's correct the block if needed.
+// Actually, I replaced `builder.WebHost.UseUrls...` AND `builder.Host.UseSerilog...` start with just `builder.Services.AddSerilog...` which is wrong for `builder.Host`.
+// Let's restore `builder.Host.UseSerilog` properly.
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration
@@ -39,10 +42,17 @@ builder.Services.AddMassTransit(x =>
     x.AddSagaStateMachine<BookingSaga, BookingSagaState>()
         .InMemoryRepository();
 
+    x.AddConsumer<DebugPaymentConsumer>();
+
     x.UsingRabbitMq((context, cfg) =>
     {
         var configuration = context.GetRequiredService<IConfiguration>();
         var host = configuration["RabbitMq:Host"] ?? "localhost";
+
+        cfg.ReceiveEndpoint("debug-payment-queue", e =>
+        {
+            e.ConfigureConsumer<DebugPaymentConsumer>(context);
+        });
 
         cfg.Host(host, "/", h =>
         {

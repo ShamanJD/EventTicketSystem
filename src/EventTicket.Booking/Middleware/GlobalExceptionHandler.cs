@@ -1,7 +1,7 @@
 using EventTicket.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace EventTicket.Api.Middleware;
+namespace EventTicket.Booking.Middleware;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
